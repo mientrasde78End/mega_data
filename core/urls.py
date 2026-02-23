@@ -1,27 +1,54 @@
-"""
-URL configuration for core project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework.authtoken.views import obtain_auth_token
+
+# 🔹 DRF Spectacular
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+    SpectacularRedocView,
+)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/profile/', include("profile_app.urls")),
-    path('api/projects/', include("projects.urls")),
-    path('api/contact/', include("contact.urls")),
+    path("admin/", admin.site.urls),
+
+    #  Auth
+    path("api/auth/login/", obtain_auth_token),
+
+    #  OpenAPI Schema
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+
+    #  Swagger UI
+    path(
+        "api/docs/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+
+    #  Redoc
+    path(
+        "api/redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc",
+    ),
+
+    #  Ecommerce
+    path("api/ecommerce/products/", include("ecommerce_products.urls")),
+    path("api/ecommerce/users/", include("ecommerce_users.urls")),
+    path("api/ecommerce/orders/", include("ecommerce_orders.urls")),
+    path("api/ecommerce/payments/", include("ecommerce_payments.urls")),
+
+    #  API Products
+    path("api/v1/products/", include("Api_products.urls")),
+
+    # Blog
+    path("api/blog/auth/", include("blog_accounts.urls")),
+    path("api/blog/posts/", include("blog_posts.urls")),
+
+    # Profile / Projects / Contact
+    path("api/profile/", include("profile_app.urls")),
+    path("api/projects/", include("projects.urls")),
+    path("api/contact/", include("contact.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
