@@ -3,7 +3,6 @@ from datetime import timedelta
 import os
 import stripe
 from dotenv import load_dotenv
-from corsheaders.defaults import default_headers
 
 # =========================
 # BASE
@@ -18,11 +17,7 @@ load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
 DEBUG = os.getenv("DEBUG", "False") == "True"
-
-ALLOWED_HOSTS = os.getenv(
-    "ALLOWED_HOSTS",
-    "ecommerce-backend.onrender.com"
-).split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
 # =========================
 # STRIPE
@@ -37,6 +32,9 @@ stripe.api_key = STRIPE_SECRET_KEY
 
 INSTALLED_APPS = [
     "corsheaders",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "drf_spectacular",
 
     "django.contrib.admin",
     "django.contrib.auth",
@@ -44,10 +42,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-    "rest_framework",
-    "rest_framework.authtoken",
-    "drf_spectacular",
 
     "profile_app",
     "projects",
@@ -62,12 +56,12 @@ INSTALLED_APPS = [
 ]
 
 # =========================
-# MIDDLEWARE (ORDEN CRÍTICO)
+# MIDDLEWARE
 # =========================
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # 👈 SIEMPRE PRIMERO
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -79,30 +73,14 @@ MIDDLEWARE = [
 # =========================
 # CORS
 # =========================
+
 CORS_ALLOW_ALL_ORIGINS = True
-
-
-CORS_ALLOWED_ORIGINS = [
-    "https://ecommerce-gems.vercel.app",
-    "https://portfoliolofket.netlify.app",
-]
-
-CORS_ALLOW_CREDENTIALS = True
-
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    "authorization",
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://ecommerce-gems.vercel.app",
-    "https://portfoliolofket.netlify.app",
-]
 
 # =========================
 # URL / WSGI
 # =========================
-
-ROOT_URLCONF = "core.urls"
+    
+ROOT_URLCONF = "core.urls"  
 WSGI_APPLICATION = "core.wsgi.application"
 
 # =========================
@@ -137,7 +115,7 @@ DATABASES = {
         "HOST": os.getenv("DB_HOST"),
         "PORT": os.getenv("DB_PORT"),
         "OPTIONS": {
-            "sslmode": "require",
+            "sslmode": "require",  # obligatorio para Supabase
         },
         "CONN_MAX_AGE": 600,
     }
