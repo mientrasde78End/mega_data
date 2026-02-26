@@ -79,8 +79,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 # =========================
 # URL / WSGI
 # =========================
-    
-ROOT_URLCONF = "core.urls"  
+
+ROOT_URLCONF = "core.urls"
 WSGI_APPLICATION = "core.wsgi.application"
 
 # =========================
@@ -103,7 +103,7 @@ TEMPLATES = [
 ]
 
 # =========================
-# DATABASE (SUPABASE)
+# DATABASE
 # =========================
 
 DATABASES = {
@@ -115,7 +115,7 @@ DATABASES = {
         "HOST": os.getenv("DB_HOST"),
         "PORT": os.getenv("DB_PORT"),
         "OPTIONS": {
-            "sslmode": "require",  # obligatorio para Supabase
+            "sslmode": "require",
         },
         "CONN_MAX_AGE": 600,
     }
@@ -164,7 +164,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "ecommerce_users.User"
 
 # =========================
-# DJANGO REST FRAMEWORK
+# DRF
 # =========================
 
 REST_FRAMEWORK = {
@@ -188,7 +188,7 @@ SIMPLE_JWT = {
 }
 
 # =========================
-# SWAGGER / OPENAPI
+# SWAGGER
 # =========================
 
 SPECTACULAR_SETTINGS = {
