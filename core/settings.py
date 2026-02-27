@@ -150,8 +150,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-# 👇 ESTA LINEA ES LA CLAVE PARA QUE NO ROMPA collectstatic
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Django 5.2 todavía acepta ambos
 STORAGES = {
