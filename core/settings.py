@@ -68,7 +68,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # obligatorio para Render
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -77,10 +77,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-# =========================
-# CORS
-# =========================
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -122,9 +118,7 @@ DATABASES = {
         "PASSWORD": os.getenv("DB_PASSWORD"),
         "HOST": os.getenv("DB_HOST"),
         "PORT": os.getenv("DB_PORT"),
-        "OPTIONS": {
-            "sslmode": "require",
-        },
+        "OPTIONS": {"sslmode": "require"},
         "CONN_MAX_AGE": 600,
     }
 }
@@ -150,13 +144,16 @@ USE_I18N = True
 USE_TZ = True
 
 # =========================
-# STATIC FILES (WhiteNoise)
+# STATIC FILES
 # =========================
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-# 👇 IMPORTANTE: Django 6 usa STORAGES
+# 👇 ESTA LINEA ES LA CLAVE PARA QUE NO ROMPA collectstatic
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Django 5.2 todavía acepta ambos
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -170,9 +167,7 @@ STORAGES = {
 # CLOUDINARY
 # =========================
 
-cloudinary.config(
-    secure=True
-)
+cloudinary.config(secure=True)
 
 # =========================
 # DEFAULT PK
