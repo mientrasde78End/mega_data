@@ -1,17 +1,19 @@
 import os
 from pathlib import Path
-import dj_database_url
 from dotenv import load_dotenv
 
-load_dotenv()
+# ========================
+# BASE
+# ========================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 # ========================
 # SECURITY
 # ========================
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = [
@@ -25,6 +27,7 @@ ALLOWED_HOSTS = [
 # ========================
 
 INSTALLED_APPS = [
+    # Django
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -32,14 +35,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # third party
+    # Third party
     "corsheaders",
     "rest_framework",
     "django_filters",
     "cloudinary",
     "cloudinary_storage",
 
-    # your apps
+    # Your apps
     "apps.projects",
 ]
 
@@ -49,7 +52,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # importante
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # manejo de static files
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -84,11 +87,16 @@ WSGI_APPLICATION = "core.wsgi.application"
 # ========================
 
 DATABASES = {
-    "default": dj_database_url.parse(
-        os.getenv("DATABASE_URL"),
-        conn_max_age=600,
-        ssl_require=True,
-    )
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT", 5432),
+        "OPTIONS": {"sslmode": "require"},
+        "CONN_MAX_AGE": 600,
+    }
 }
 
 # ========================
@@ -96,8 +104,7 @@ DATABASES = {
 # ========================
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # ========================
@@ -119,11 +126,35 @@ CLOUDINARY_STORAGE = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 # ========================
-# REST
+# REST FRAMEWORK
 # ========================
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": [
-        "django_filters.rest_framework.DjangoFilterBackend"
-    ]
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
+}
+
+# ========================
+# DEFAULT PK
+# ========================
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# ========================
+# JWT
+# ========================
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
