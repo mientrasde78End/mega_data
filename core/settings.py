@@ -68,7 +68,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # IMPORTANTE
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # obligatorio para Render
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -150,21 +150,29 @@ USE_I18N = True
 USE_TZ = True
 
 # =========================
-# STATIC FILES 
+# STATIC FILES (WhiteNoise)
 # =========================
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# 👇 IMPORTANTE: Django 6 usa STORAGES
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # =========================
-# CLOUDINARY 
+# CLOUDINARY
 # =========================
 
-cloudinary.config() 
-
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+cloudinary.config(
+    secure=True
+)
 
 # =========================
 # DEFAULT PK
