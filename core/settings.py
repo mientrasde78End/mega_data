@@ -107,7 +107,7 @@ TEMPLATES = [
 ]
 
 # =========================
-# DATABASE
+# DATABASE (Supabase)
 # =========================
 
 DATABASES = {
@@ -144,22 +144,20 @@ USE_I18N = True
 USE_TZ = True
 
 # =========================
-# STATIC FILES
+# STATIC FILES (Render + WhiteNoise)
 # =========================
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
-
-# Django 5.2 todavía acepta ambos
 STORAGES = {
+    # MEDIA → Cloudinary
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
+    # STATIC → WhiteNoise (SIN Manifest)
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
