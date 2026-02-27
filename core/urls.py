@@ -19,34 +19,34 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    #  Auth
+    # Auth
     path("api/auth/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/auth/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
-    #  OpenAPI Schema
+    # OpenAPI Schema
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
 
-    #  Swagger UI
+    # Swagger UI
     path(
         "api/docs/",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
 
-    #  Redoc
+    # Redoc
     path(
         "api/redoc/",
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
 
-    #  Ecommerce
+    # Ecommerce
     path("api/ecommerce/products/", include("ecommerce_products.urls")),
     path("api/ecommerce/users/", include("ecommerce_users.urls")),
     path("api/ecommerce/orders/", include("ecommerce_orders.urls")),
     path("api/ecommerce/payments/", include("ecommerce_payments.urls")),
 
-    #  API Products
+    # API Products
     path("api/v1/products/", include("Api_products.urls")),
 
     # Blog
@@ -57,4 +57,8 @@ urlpatterns = [
     path("api/profile/", include("profile_app.urls")),
     path("api/projects/", include("projects.urls")),
     path("api/contact/", include("contact.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+# desarrollo
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
