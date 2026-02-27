@@ -1,30 +1,35 @@
 import os
 from pathlib import Path
+from datetime import timedelta
+import stripe
 from dotenv import load_dotenv
+import cloudinary
 
-# ========================
+# =========================
 # BASE
-# ========================
+# =========================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-# ========================
+# =========================
 # SECURITY
-# ========================
+# =========================
 
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
 DEBUG = os.getenv("DEBUG", "False") == "True"
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    ".onrender.com",
-]
+# =========================
+# STRIPE
+# =========================
 
-# ========================
-# APPS
-# ========================
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+stripe.api_key = STRIPE_SECRET_KEY
+
+# =========================
+# APPLICATIONS
+# =========================
 
 INSTALLED_APPS = [
     # Django
@@ -38,17 +43,28 @@ INSTALLED_APPS = [
     # Third party
     "corsheaders",
     "rest_framework",
+    "rest_framework.authtoken",
+    "drf_spectacular",
     "django_filters",
     "cloudinary",
     "cloudinary_storage",
 
-    # Your apps
-    "apps.projects",
+    # Your apps (mantener todas)
+    "profile_app",
+    "projects",
+    "contact",
+    "Api_products",
+    "blog_accounts",
+    "blog_posts",
+    "ecommerce_orders",
+    "ecommerce_products",
+    "ecommerce_payments",
+    "ecommerce_users",
 ]
 
-# ========================
+# =========================
 # MIDDLEWARE
-# ========================
+# =========================
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -62,7 +78,16 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# =========================
+# URL / WSGI
+# =========================
+
 ROOT_URLCONF = "core.urls"
+WSGI_APPLICATION = "core.wsgi.application"
+
+# =========================
+# TEMPLATES
+# =========================
 
 TEMPLATES = [
     {
@@ -80,11 +105,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "core.wsgi.application"
-
-# ========================
+# =========================
 # DATABASE (Supabase)
-# ========================
+# =========================
 
 DATABASES = {
     "default": {
@@ -99,17 +122,37 @@ DATABASES = {
     }
 }
 
-# ========================
+# =========================
+# PASSWORD VALIDATION
+# =========================
+
+AUTH_PASSWORD_VALIDATORS = [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
+
+# =========================
+# INTERNATIONALIZATION
+# =========================
+
+LANGUAGE_CODE = "en-us"
+TIME_ZONE = "UTC"
+USE_I18N = True
+USE_TZ = True
+
+# =========================
 # STATIC FILES (WhiteNoise)
-# ========================
+# =========================
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# ========================
+# =========================
 # MEDIA (Cloudinary)
-# ========================
+# =========================
 
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
@@ -119,15 +162,17 @@ CLOUDINARY_STORAGE = {
     "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"),
 }
 
-# ========================
+cloudinary.config(secure=True)
+
+# =========================
 # CORS
-# ========================
+# =========================
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-# ========================
+# =========================
 # REST FRAMEWORK
-# ========================
+# =========================
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": [
@@ -139,22 +184,38 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-# ========================
+# =========================
 # DEFAULT PK
-# ========================
+# =========================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# ========================
+# =========================
 # JWT
-# ========================
-
-from datetime import timedelta
+# =========================
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+# =========================
+# AUTH
+# =========================
+
+AUTH_USER_MODEL = "ecommerce_users.User"
+
+# =========================
+# SWAGGER
+# =========================
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Totaly Backend API",
+    "DESCRIPTION": "Backend principal: ecommerce, blog, projects, profile, contact",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
