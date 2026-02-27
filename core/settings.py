@@ -68,7 +68,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # WhiteNoise activo
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -107,7 +107,7 @@ TEMPLATES = [
 ]
 
 # =========================
-# DATABASE (Supabase)
+# DATABASE
 # =========================
 
 DATABASES = {
@@ -144,22 +144,26 @@ USE_I18N = True
 USE_TZ = True
 
 # =========================
-# STATIC FILES (Render + WhiteNoise)
+# STATIC FILES
 # =========================
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STORAGES = {
-    # MEDIA → Cloudinary
+    # Media → Cloudinary
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
-    # STATIC → WhiteNoise (SIN Manifest)
+
+    # Static → WhiteNoise SIN Manifest (evita error glyphicons)
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
+
+# Esto evita que WhiteNoise falle por archivos faltantes
+WHITENOISE_MANIFEST_STRICT = False
 
 # =========================
 # CLOUDINARY
