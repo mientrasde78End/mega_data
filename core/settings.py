@@ -16,7 +16,7 @@ load_dotenv(BASE_DIR / ".env")
 # SECURITY
 # =========================
 
-SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
+SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
@@ -36,9 +36,12 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "drf_spectacular",
+
+    # Cloudinary
     "cloudinary",
     "cloudinary_storage",
 
+    # Django
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -46,6 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    # Apps
     "profile_app",
     "projects",
     "contact",
@@ -64,6 +68,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+
+    # WhiteNoise (IMPORTANTE para Render)
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -145,25 +153,19 @@ USE_I18N = True
 USE_TZ = True
 
 # =========================
-# STATIC FILES
+# STATIC FILES (PRODUCCIÓN)
 # =========================
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# =========================
-# MEDIA (solo para desarrollo local)
-# =========================
-
-if DEBUG:
-    MEDIA_URL = "/media/"
-    MEDIA_ROOT = BASE_DIR / "media"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # =========================
-# CLOUDINARY (PRODUCCIÓN)
+# CLOUDINARY (PRODUCCIÓN REAL)
 # =========================
 
-# Usa la variable CLOUDINARY_URL configurada en Render
+# Usa CLOUDINARY_URL desde variables de entorno en Render
 cloudinary.config()
 
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
