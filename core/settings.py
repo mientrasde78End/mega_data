@@ -3,6 +3,7 @@ from datetime import timedelta
 import os
 import stripe
 from dotenv import load_dotenv
+import cloudinary
 
 # =========================
 # BASE
@@ -151,7 +152,7 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # =========================
-# MEDIA (solo en desarrollo)
+# MEDIA (solo para desarrollo local)
 # =========================
 
 if DEBUG:
@@ -160,10 +161,10 @@ if DEBUG:
 
 # =========================
 # CLOUDINARY (PRODUCCIÓN)
-# Usa solo CLOUDINARY_URL en Render
 # =========================
 
-CLOUDINARY_STORAGE = {}
+# Usa la variable CLOUDINARY_URL configurada en Render
+cloudinary.config()
 
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
