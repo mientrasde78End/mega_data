@@ -153,7 +153,7 @@ USE_I18N = True
 USE_TZ = True
 
 # =========================
-# STATIC FILES (PRODUCCIÓN)
+# STATIC FILES 
 # =========================
 
 STATIC_URL = "/static/"
@@ -162,11 +162,11 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # =========================
-# CLOUDINARY (PRODUCCIÓN REAL)
+# CLOUDINARY 
 # =========================
 
-# Usa CLOUDINARY_URL desde variables de entorno en Render
 cloudinary.config()
+print("CLOUDINARY_URL:", os.getenv("CLOUDINARY_URL"))
 
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
